@@ -310,7 +310,8 @@ struct PairingView: View {
                     .listRowBackground(Color.clear)
                 }
                 
-                Section { Button { scale.startScan() } label: { Label(scale.isScanning ? "正在搜索体脂秤…" : "重新搜索", systemImage: "magnifyingglass") } } footer: { Text("仅显示名称以 AFU-WL 开头、且符合协议特征的设备。") }
+                Section { Button { scale.startScan() } label: { Label(scale.isScanning ? "正在搜索体脂秤…" : "重新搜索", systemImage: "magnifyingglass") } } footer: { Text("仅显示名称以 AFU‑WL / AFU‑BH 开头、且符合协议特征的设备。")
+ }
                 if !scale.discoveredDevices.isEmpty { Section("发现的设备") { ForEach(scale.discoveredDevices) { d in Button { scale.connect(d) } label: { HStack { VStack(alignment: .leading) { Text(d.name); Text(d.identifier).font(.caption).foregroundStyle(.secondary) }; Spacer(); Text("\(d.rssi) dBm").font(.caption) } } } } }
             }
             .navigationTitle("设备配对")
@@ -562,7 +563,8 @@ extension ScaleManager: @preconcurrency CBCentralManagerDelegate, @preconcurrenc
         let name = peripheral.name ?? advertisementData[CBAdvertisementDataLocalNameKey] as? String ?? "未知设备"
         let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
         let isAFU = Self.isAFUAdvertisement(manufacturerData)
-        let matchesPrefix = name.uppercased().hasPrefix("AFU-WL")
+        let matchesPrefix = name.uppercased().hasPrefix("AFU‑WL") || name.uppercased().hasPrefix("AFU‑BH")
+
         
         log("[BLE] Discovered: \(name) (\(peripheral.identifier.uuidString)), RSSI: \(RSSI), matches: \(matchesPrefix), isAFU: \(isAFU)")
         
